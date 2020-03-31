@@ -1,0 +1,27 @@
+{
+  "name": "fullstack-firebase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "cross-env NODE_ENV=development concurrently \"postcss src/tailwind.css -o public/main.css --watch\"  \"live-server ./public\"",
+    "development": "cross-env NODE_ENV=development postcss src/tailwind.css -o public/main.css",
+    "production": "cross-env NODE_ENV=production postcss src/tailwind.css -o public/main.css",
+    "start": "npm run serve"
+  },
+  "dependencies": {
+    "autoprefixer": "^9.5.1",
+    "tailwindcss": "^1.0"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^1.2.0",
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "cssnano": "^4.1.10",
+    "live-server": "^1.2.1",
+    "postcss-cli": "^6.1.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

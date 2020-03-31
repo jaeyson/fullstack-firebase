@@ -1,0 +1,5 @@
+* text=auto
+
+.js eol=lf
+.sh eol=lf
+.*rc eol=lf
