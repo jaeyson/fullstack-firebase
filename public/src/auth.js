@@ -2,38 +2,41 @@ document.addEventListener("DOMContentLoaded", function() {
   const getID = x => document.getElementById(x);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  const errorSwitch = err => ({
+  const showErrorMessage = err => ({
     "auth/wrong-password": "wrong password",
     "auth/invalid-email": "wrong email",
     "auth/user-disabled": "user has been disabled",
     "auth/user-not-found": "user not found",
-    "auth/network-request-failed": "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
+    "auth/network-request-failed": "a network error (such as timeout, interrupted connection or unreachable host) has occurred."
   })[err]; //errorSwitch(errorCode);
 
-  let getOrSetInput = (event, method, fn) => {
+  // getInput :: e -> String -> Function name -> what's return val of auth.fn()?
+  const getInput = (event, method, fn) => {
     event.preventDefault();
     const email = getID(`${method}-form`)[`${method}-email`].value;
     const password = getID(`${method}-form`)[`${method}-password`].value;
 
     auth.fn(email, password).then(() => {
-      //.catch(error => console.log(errorSwitch(error.code)));
+      //.catch(error => console.log(showErrorMessage(error.code)));
       getID(`modal-${method}`).classList.replace("block", "hidden");
       getID(`${method}-form`).reset();
     })
   };
-  //let getOptions = { source: "cache" };
+  //const getOptions = { source: "cache" };
 
   auth.onAuthStateChanged(usr => {
     user
-      ? db.collection("guides").get().then(snapshot => setupGuides(".guides", snapshot.docs))
-      : setupGuides([])
+      ? db.collection("guides")
+          .get()
+          .then(content => {setupGuides(".guides", content.docs); setupUI(user)})
+      : {setupGuides([]); setupUI()}
   });
 
   getID("register-form")
-    .addEventListener("submit", e => getOrSetInput(e, register, createUserWithEmailAndPassword));
+    .addEventListener("submit", e => getInput(e, "register", createUserWithEmailAndPassword));
 
   getID("login-form")
-    .addEventListener("submit", e => getOrSetInput(e, login, signInWithEmailAndPassword));
+    .addEventListener("submit", e => getInput(e, "login", signInWithEmailAndPassword));
 
   getID("logout")
     .addEventListener("click", e => {e.preventDefault();auth.signOut()});

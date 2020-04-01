@@ -1,4 +1,6 @@
-document.querySelectorAll('.modal-trigger').forEach(trigger => {
+const $ = x => document.querySelectorAll(x);
+
+$('.modal-trigger').forEach(trigger => {
   trigger.addEventListener('click', e => {
     Array.from(document.getElementsByClassName("modal"))
     .forEach(modal => {
@@ -7,8 +9,17 @@ document.querySelectorAll('.modal-trigger').forEach(trigger => {
         : modal.classList.replace("block", "hidden")
     })
   })
-})
+});
 
+const setupUI = user => {
+  user
+    ? ($("logged-in").forEach(item => item.classList.replace("hidden", "block"));
+       $("logged-out").forEach(item => item.classList.replace("block", "hidden")))
+    : ($("logged-in").forEach(item => item.classList.replace("block", "hidden"));
+       $("logged-out").forEach(item => item.classList.replace("hidden", "block")))
+};
+
+// setupGuides :: String -> HTMLCollection -> String -> String
 const setupGuides = (elem, data, html="") => {
   if (data.length) {
     data.forEach(doc => {
