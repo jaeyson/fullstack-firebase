@@ -10,14 +10,16 @@ document.querySelectorAll('.modal-trigger').forEach(trigger => {
 })
 
 const setupGuides = (elem, data, html="") => {
-  data.forEach(doc => {
-    const li = `
-      <details>
-        <summary>${doc.data().title}</summary>
-        <p>${doc.data().content}</p>
-      </details>`;
-    html += li;
-  })
-  document.querySelector(elem).innerHTML = html;
+  if (data.length) {
+    data.forEach(doc => {
+      const li = `
+        <details>
+          <summary>${doc.data().title}</summary>
+          <p>${doc.data().content}</p>
+        </details>`;
+      html += li;
+    })
+    document.querySelector(elem).innerHTML = html
+  } else document.querySelector(elem).innerHTML = "<h3>Login to view guides</h3>"
 };
 

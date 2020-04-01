@@ -21,11 +21,13 @@ document.addEventListener("DOMContentLoaded", function() {
       getID(`${method}-form`).reset();
     })
   };
-  let getOptions = { source: "cache" };
+  //let getOptions = { source: "cache" };
 
-  db.collection("guides").get().then(snapshot => setupGuides(".guides", snapshot.docs));
-
-  auth.onAuthStateChanged(usr => usr ? console.log("logged in") : console.log("logged out"));
+  auth.onAuthStateChanged(usr => {
+    user
+      ? db.collection("guides").get().then(snapshot => setupGuides(".guides", snapshot.docs))
+      : setupGuides([])
+  });
 
   getID("register-form")
     .addEventListener("submit", e => getOrSetInput(e, register, createUserWithEmailAndPassword));
