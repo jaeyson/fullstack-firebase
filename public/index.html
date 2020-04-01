@@ -20,25 +20,25 @@
     <nav>
       <ul class="flex justify-end py-4">
         <li class="mr-6 logged-in">
-          <a data-target="modal-account" class="modal-trigger text-blue-500 hover:text-blue-800" href="#">Account</a>
+          <a id="account" class="modal-trigger text-blue-500 hover:text-blue-800" href="#">Account</a>
         </li>
         <li class="mr-6 logged-in">
           <a id="logout" class="text-blue-500 hover:text-blue-800" href="#">Logout</a>
         </li>
-        <li data-target="modal-create" class="modal-trigger mr-6 logged-in">
+        <li id="create" class="modal-trigger mr-6 logged-in">
           <a class="text-blue-500 hover:text-blue-800" href="#">Create Guide</a>
         </li>
-        <li data-target="modal-login" class="modal-trigger mr-6 logged-out">
+        <li id="login" class="modal-trigger mr-6 logged-out">
           <a class="text-gray-400 cursor-not-allowed" href="#">Login</a>
         </li>
-        <li data-target="modal-signup" class="modal-trigger mr-6 logged-out">
-          <a class="text-gray-400 cursor-not-allowed" href="#">Sugn up</a>
+        <li id="register" class="modal-trigger mr-6 logged-out">
+          <a class="text-gray-400 hover:text-blue-800" href="#">Sign up</a>
         </li>
       </ul>
     </nav>
 
     <!-- sign up modal register start -->
-    <div id="modal-register" class="modal">
+    <div id="modal-register" class="modal hidden">
       <div class="modal-content">
         <form id="signup-form" class="w-full max-w-sm">
           <div class="text-center mb-3">
@@ -46,22 +46,22 @@
           </div>
           <div class="md:flex md:items-center mb-6">
             <div class="md:w-1/3">
-              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-email">
+              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="register-email">
                 Email address
               </label>
             </div>
             <div class="md:w-2/3">
-              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-email" type="email" placeholder="john.smith@domain.co" required>
+              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="register-email" type="email" placeholder="john.smith@domain.co" required>
             </div>
           </div>
           <div class="md:flex md:items-center mb-6">
             <div class="md:w-1/3">
-              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="register-password">
                 Password
               </label>
             </div>
             <div class="md:w-2/3">
-              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-password" type="password" placeholder="******************" required>
+              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="register-password" type="password" placeholder="******************" required>
             </div>
           </div>
           <div class="md:flex md:items-center">
@@ -78,7 +78,7 @@
     <!-- sign up modal register end -->
 
     <!-- sign up modal login start -->
-    <div id="modal-login" class="modal">
+    <div id="modal-login" class="modal hidden">
       <div class="modal-content">
         <form id="login-form" class="w-full max-w-sm">
           <div class="text-center mb-3">
@@ -86,22 +86,22 @@
           </div>
           <div class="md:flex md:items-center mb-6">
             <div class="md:w-1/3">
-              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-email">
+              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="login-email">
                 email address
               </label>
             </div>
             <div class="md:w-2/3">
-              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-email" type="email" placeholder="john.smith@domain.co" required>
+              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="login-email" type="email" placeholder="john.smith@domain.co" required>
             </div>
           </div>
           <div class="md:flex md:items-center mb-6">
             <div class="md:w-1/3">
-              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-password">
+              <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="login-password">
                 password
               </label>
             </div>
             <div class="md:w-2/3">
-              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-password" type="password" placeholder="******************" required>
+              <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="login-password" type="password" placeholder="******************" required>
             </div>
           </div>
           <div class="md:flex md:items-center">
@@ -118,7 +118,7 @@
     <!-- sign up modal login end -->
 
     <!-- sign up modal account start -->
-    <div id="modal-account" class="modal">
+    <div id="modal-account" class="modal hidden">
       <h4>Account details</h4>
       <div class="account-details">
       </div>
@@ -126,7 +126,7 @@
     <!-- sign up modal login end -->
 
     <!-- sign up modal create guide start -->
-    <div id="modal-create" class="modal">
+    <div id="modal-create" class="modal hidden">
       <div class="modal-content">
         <h4>create guide</h4>
         <form id="create-form" class="w-full max-w-sm">
@@ -179,6 +179,14 @@
         // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
         //
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        const modalTrigger = document.querySelectorAll('.modal-trigger');
+
+        modalTrigger.forEach(trigger => {
+          trigger.addEventListener('click', (e) => {
+            const modal = document.querySelector(`#modal-${trigger.id}`);
+            modal.classList.remove('hidden');
+          });
+        });
 
         try {
           let app = firebase.app();
