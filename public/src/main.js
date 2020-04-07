@@ -1,7 +1,10 @@
-const $ = x => document.querySelectorAll(x);
+const $all = x => document.querySelectorAll(x);
+const $ = x => document.querySelector(x);
 
-$('.modal-trigger').forEach(trigger => {
+$all(".modal-trigger").forEach(trigger => {
   trigger.addEventListener('click', e => {
+    e.preventDefault();
+
     Array.from(document.getElementsByClassName("modal"))
     .forEach(modal => {
       (modal.id == `modal-${trigger.id}`)
@@ -12,11 +15,13 @@ $('.modal-trigger').forEach(trigger => {
 });
 
 const setupUI = user => {
-  user
-    ? ($("logged-in").forEach(item => item.classList.replace("hidden", "block"));
-       $("logged-out").forEach(item => item.classList.replace("block", "hidden")))
-    : ($("logged-in").forEach(item => item.classList.replace("block", "hidden"));
-       $("logged-out").forEach(item => item.classList.replace("hidden", "block")))
+  if (user) {
+    $all(".logged-in").forEach(item => item.classList.replace("hidden", "block"));
+    $all(".logged-out").forEach(item => item.classList.replace("block", "hidden"));
+  } else {
+    $all(".logged-in").forEach(item => item.classList.replace("block", "hidden"));
+    $all(".logged-out").forEach(item => item.classList.replace("hidden", "block"));
+  }
 };
 
 // setupGuides :: String -> HTMLCollection -> String -> String
@@ -29,8 +34,8 @@ const setupGuides = (elem, data, html="") => {
           <p>${doc.data().content}</p>
         </details>`;
       html += li;
-    })
-    document.querySelector(elem).innerHTML = html
-  } else document.querySelector(elem).innerHTML = "<h3>Login to view guides</h3>"
+    });
+    $(elem).innerHTML = html
+  } else $(elem).innerHTML = "<h3>Login to view guides</h3>"
 };
 
