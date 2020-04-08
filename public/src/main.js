@@ -6,7 +6,7 @@ $all(".modal-trigger").forEach(trigger => {
     e.preventDefault();
 
     Array.from(document.getElementsByClassName("modal"))
-    .forEach(modal => {
+      .forEach(modal => {
       (modal.id == `modal-${trigger.id}`)
         ? modal.classList.replace("hidden", "block")
         : modal.classList.replace("block", "hidden")
@@ -16,13 +16,17 @@ $all(".modal-trigger").forEach(trigger => {
 
 const setupUI = user => {
   if (user) {
+    accountDetails($(".account-details"), `<div>Logged in as ${user.email}</div>`);
     $all(".logged-in").forEach(item => item.classList.replace("hidden", "block"));
     $all(".logged-out").forEach(item => item.classList.replace("block", "hidden"));
   } else {
+    accountDetails($(".account-details"));
     $all(".logged-in").forEach(item => item.classList.replace("block", "hidden"));
     $all(".logged-out").forEach(item => item.classList.replace("hidden", "block"));
   }
 };
+
+const accountDetails = (elem, html="") => elem.innerHTML = html;
 
 // setupGuides :: String -> HTMLCollection -> String -> String
 const setupGuides = (elem, data, html="") => {

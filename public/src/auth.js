@@ -28,10 +28,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      console.log("user logged in");
+      console.log(user);
       db.collection("guides").onSnapshot(snapshot => {
         setupGuides(".guides", snapshot.docs);
-        setupUI(user); });
+        setupUI(user)
+      }).catch(err => console.log(err.message))
     } else { setupGuides(".guides", []); setupUI(false) }
   });
 
