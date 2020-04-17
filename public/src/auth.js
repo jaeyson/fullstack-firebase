@@ -1,59 +1,75 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const getID = x => document.getElementById(x);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  const email = method => getID(`${method}-form`)[`${method}-email`].value;
-  const password = method => getID(`${method}-form`)[`${method}-password`].value;
-  const showErrorMessage = err => ({
+  const showErrorMessage = error => ({
     "auth/wrong-password": "wrong password",
     "auth/invalid-email": "wrong email",
     "auth/user-disabled": "user has been disabled",
     "auth/user-not-found": "user not found",
     "auth/network-request-failed": "a network error (such as timeout, interrupted connection or unreachable host) has occurred.",
+    "auth/email-already-in-use": "email address already in use",
     "auth/argument-error": "wrong type of args"
-  })[err]; //errorSwitch(errorCode);
-
-  const hideElem = method => {
-      getID(`modal-${method}`).classList.replace("block", "hidden");
-      getID(`${method}-form`).reset() };
-
-  // getInput :: e -> String -> Function name -> what's return val of auth.fn()?
-  const getInput = (event, method, fn) => {
-    event.preventDefault();
-
-    fn.then(hideElem(method))
-      .catch(error => console.log(showErrorMessage(error.code)));
-  };
-  //const getOptions = { source: "cache" };
+  })[error]; //showErrorMessage(error.code)
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      console.log(user);
       db.collection("guides").onSnapshot(snapshot => {
-        setupGuides(".guides", snapshot.docs);
+        setupGuides(snapshot.docs);
         setupUI(user)
-      }).catch(err => console.log(err.message))
-    } else { setupGuides(".guides", []); setupUI(false) }
-  });
+      }, error => console.log(error))
+    } else { setupGuides([]); setupUI(false) }
+  })
 
   $("#create-form").addEventListener("submit", e => {
     e.preventDefault();
 
-    db.collection("guides")
-      .add({
+    db.collection("guides").add({
         title: $("#create-form")["create-title"].value,
         content: $("#create-form")["create-content"].value })
-      .catch(err => console.log(err.message))
+      .catch(error => console.log(showErrorMessage(error.code)))
       .then(() => hideElem("create"))
-  })
+  });
 
-  getID("register-form")
-    .addEventListener("submit", e => getInput(e, "register", auth.createUserWithEmailAndPassword(email("register"),password("register"))));
+  /*
+  getID("update-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const firstName = getID("update-form")["update-fname"].value;
+    const lastName = getID("update-form")["update-lname"].value;
 
-  getID("login-form")
-    .addEventListener("submit", e => getInput(e, "login", auth.signInWithEmailAndPassword(email("login"),password("login"))));
+    auth.currentUser.updateProfile({displayName: `${firstName} ${lastName}`, photoURL: "#"});
+    auth.currentUser.updateEmail(email("update"));
+  });
+  */
 
-  getID("logout")
-    .addEventListener("click", e => { e.preventDefault(); auth.signOut() });
+  getID("register-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const firstName = getID("register-form")["register-fname"].value;
+    const lastName = getID("register-form")["register-lname"].value;
+
+    auth.createUserWithEmailAndPassword(email("register"), password("register"))
+      .then(cred => {
+        return db.collection("users").doc(cred.user.uid).set({
+          firstName: firstName,
+          lastName: lastName,
+          email: email("register") });
+        return cred.user.updateProfile({displayName: `${firstName} ${lastName}`});
+      })
+      .then(() => hideElem("register"));
+    //console.log(auth.currentUser);
+    //auth.currentUser.updateProfile({displayName: `${firstName} ${lastName}`, photoURL: "#"});
+    //console.log(auth.updateCurrentUser({displayName: `${firstName} ${lastName}`, photoURL: "#"}));
+  });
+
+  getID("login-form").addEventListener("submit", e => {
+    e.preventDefault();
+    auth.signInWithEmailAndPassword(email("login"),password("login"))
+      .catch(error => console.log(showErrorMessage(error.code)))
+      .then(() => hideElem("login"))
+  });
+
+  getID("logout").addEventListener("click", e => {
+    e.preventDefault();
+    auth.signOut().then(() => console.log("logged out"))
+  });
 });
 

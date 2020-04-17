@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+img#account-hover {
+  width: 30px;
+  border-radius: 50%;
+  border: 1px solid #dfdfdf;
+}
