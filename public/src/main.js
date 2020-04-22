@@ -1,25 +1,22 @@
-const getID = x => document.getElementById(x);
+//const getID = x => document.getElementById(x);
 const $all = x => document.querySelectorAll(x);
-const $ = x => document.querySelector(x);
-const email = method => getID(`${method}-form`)[`${method}-email`].value;
-const password = method => getID(`${method}-form`)[`${method}-password`].value;
+const email = method => $(`${method}-form`)[`${method}-email`].value;
+const password = method => $(`${method}-form`)[`${method}-password`].value;
 
-$all(".modal-trigger").forEach(trigger => {
-  trigger.addEventListener('click', e => {
-    e.preventDefault();
-
-    Array.from(document.getElementsByClassName("modal"))
-      .forEach(modal => {
-      (modal.id == `modal-${trigger.id}`)
-        ? modal.classList.replace("hidden", "block")
-        : modal.classList.replace("block", "hidden")
-    })
+Object.defineProperties(NodeList.prototype, {
+  ["toggle", "add", "remove"].forEach(method => {
+    return method: {
+      value: function(state) {
+        this.forEach(item => item.classList.toggle(state))
+      }
+    }
   })
-});
+})
 
 const hideElem = method => {
-    getID(`modal-${method}`).classList.replace("block", "hidden");
-    getID(`${method}-form`).reset() };
+  $all(`modal-${method}`).toggle("hidden");
+  $(`${method}-form`).reset()
+};
 
 // getInput :: e -> String -> Function name -> what's return val of auth.fn()?
 const getInput = (event, method, fn) => {
@@ -32,24 +29,27 @@ const getInput = (event, method, fn) => {
 
 const setupUI = user => {
   if (user) {
-    accountDetails($("#account-details"), user);
-    $all(".logged-in").forEach(item => item.classList.replace("hidden", "block"));
-    $all(".logged-out").forEach(item => item.classList.replace("block", "hidden"));
+    if (user.admin) $all(".admin").remove("hidden");
+
+    accountDetails($("account-details"), user);
+    $all(".logged-in, logged-out").toggle("hidden")
   } else {
-    accountDetails($("#account-details"));
-    $all(".logged-in").forEach(item => item.classList.replace("block", "hidden"));
-    $all(".logged-out").forEach(item => item.classList.replace("hidden", "block"));
+    accountDetails($("account-details"));
+    $all(".logged-in, .admin").add("hidden");
+    $all(".logged-out").remove("hidden");
   }
 };
 
-//const accountDetails = (elem, html="") => elem.innerHTML = html;
-const accountDetails = (elem, user="", html="") => {
-  if (user != "") {
+const accountDetails = (elem, user, html="") => {
+  if (user) {
     html +=
     `<div>
       <img src=${user.photoURL || "#"} alt="Profile Pic">
       <p>${user.displayName || "someone"}</p>
       <p>Email: ${user.email}</p>
+      <p class="font-bold text-white bg-purple-500 rounded">
+        ${user.admin ? "Admin" : ""}
+      <p>
     </div>`; elem.innerHTML = html
   } else elem.innerHTML = html
 };
@@ -62,10 +62,17 @@ const setupGuides = (data, html="") => {
         <details>
           <summary>${doc.data().title}</summary>
           <p>${doc.data().content}</p>
-        </details>`;
+        </details>
+      `;
       html += li;
     });
-    $(".guides").innerHTML = html
-  } else $(".guides").innerHTML = html
+    $("guides").innerHTML = html
+  } else $("guides").innerHTML = html
 };
 
+$all(".modal-trigger").forEach(trigger => {
+  trigger.addEventListener('click', e => {
+    e.preventDefault();
+    $all(".modal").toggle("hidden")
+  })
+});

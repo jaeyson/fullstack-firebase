@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   const auth = firebase.auth();
   const db = firebase.firestore();
+  const functions = firebase.functions();
   const showErrorMessage = error => ({
     "auth/wrong-password": "wrong password",
     "auth/invalid-email": "wrong email",
@@ -13,19 +14,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
   auth.onAuthStateChanged(user => {
     if (user) {
+      user.geIdTokenResult().then(idTokenResult => {
+        user.admin = idTokenResult.claims.admin;
+        console.log(idTokenResult.claims); //true
+        setupUI(user)
+      })
       db.collection("guides").onSnapshot(snapshot => {
         setupGuides(snapshot.docs);
-        setupUI(user)
       }, error => console.log(error))
     } else { setupGuides([]); setupUI(false) }
   })
 
-  $("#create-form").addEventListener("submit", e => {
+  $("create-form").addEventListener("submit", e => {
     e.preventDefault();
 
     db.collection("guides").add({
-        title: $("#create-form")["create-title"].value,
-        content: $("#create-form")["create-content"].value })
+        title: $("create-form")["create-title"].value,
+        content: $("create-form")["create-content"].value })
       .catch(error => console.log(showErrorMessage(error.code)))
       .then(() => hideElem("create"))
   });
@@ -41,10 +46,10 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   */
 
-  getID("register-form").addEventListener("submit", e => {
+  $("register-form").addEventListener("submit", e => {
     e.preventDefault();
-    const firstName = getID("register-form")["register-fname"].value;
-    const lastName = getID("register-form")["register-lname"].value;
+    const firstName = $("register-form")["register-fname"].value;
+    const lastName = $("register-form")["register-lname"].value;
 
     auth.createUserWithEmailAndPassword(email("register"), password("register"))
       .then(cred => {
@@ -54,22 +59,38 @@ document.addEventListener("DOMContentLoaded", function() {
           email: email("register") });
         return cred.user.updateProfile({displayName: `${firstName} ${lastName}`});
       })
-      .then(() => hideElem("register"));
+      .then(() => {
+        hideElem("register");
+        $all("#register-form > .error").textContent = ""
+      })
+      .catch(error => $all("#register-form > .error").textContent = error.message)
     //console.log(auth.currentUser);
     //auth.currentUser.updateProfile({displayName: `${firstName} ${lastName}`, photoURL: "#"});
     //console.log(auth.updateCurrentUser({displayName: `${firstName} ${lastName}`, photoURL: "#"}));
   });
 
-  getID("login-form").addEventListener("submit", e => {
+  $("login-form").addEventListener("submit", e => {
     e.preventDefault();
     auth.signInWithEmailAndPassword(email("login"),password("login"))
       .catch(error => console.log(showErrorMessage(error.code)))
       .then(() => hideElem("login"))
   });
 
-  getID("logout").addEventListener("click", e => {
+  $("logout").addEventListener("click", e => {
     e.preventDefault();
     auth.signOut().then(() => console.log("logged out"))
   });
+
+  $("admin-form").addEventListener("submit", e => {
+    e.preventDefault();
+
+    // let mult = a => b => a * b
+    // let currying = mult(2)
+    // currying(4) returns 8
+    // or mult(2)(4) returns 8
+    functions.httpsCallable("addAdminRole", { email: $("admin-email").value; })
+      .then(result => { console.log(result) })
+  });
+
 });
 
