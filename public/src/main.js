@@ -1,42 +1,29 @@
-//const getID = x => document.getElementById(x);
 const $all = x => document.querySelectorAll(x);
-const email = method => $(`${method}-form`)[`${method}-email`].value;
-const password = method => $(`${method}-form`)[`${method}-password`].value;
+const $ = x => document.querySelector(x);
+const getIdValue = (method, type) => $(`#${method}-form`)[`${method}-${type}`].value;
 
-Object.defineProperties(NodeList.prototype, {
-  ["toggle", "add", "remove"].forEach(method => {
-    return method: {
-      value: function(state) {
-        this.forEach(item => item.classList.toggle(state))
-      }
-    }
+["toggle","remove", "add"].forEach(method => {
+    Object.defineProperty(NodeList.prototype, method, {
+    value: function(state) {this.forEach(item => item.classList[method](state))}
   })
 })
 
 const hideElem = method => {
-  $all(`modal-${method}`).toggle("hidden");
-  $(`${method}-form`).reset()
+  $all(`#modal-${method}`).add("hidden");
+  $(`#${method}-form`).reset()
 };
-
-// getInput :: e -> String -> Function name -> what's return val of auth.fn()?
-const getInput = (event, method, fn) => {
-  event.preventDefault();
-
-  fn.then(hideElem(method))
-    .catch(error => console.log(showErrorMessage(error.code)));
-};
-//const getOptions = { source: "cache" };
 
 const setupUI = user => {
   if (user) {
     if (user.admin) $all(".admin").remove("hidden");
 
-    accountDetails($("account-details"), user);
-    $all(".logged-in, logged-out").toggle("hidden")
+    accountDetails($("#account-details"), user);
+    $all(".logged-in").remove("hidden");
+    $all(".logged-out").add("hidden")
   } else {
-    accountDetails($("account-details"));
+    accountDetails($("#account-details"));
     $all(".logged-in, .admin").add("hidden");
-    $all(".logged-out").remove("hidden");
+    $all(".logged-out").remove("hidden")
   }
 };
 
@@ -64,15 +51,42 @@ const setupGuides = (data, html="") => {
           <p>${doc.data().content}</p>
         </details>
       `;
-      html += li;
+      html += li
     });
-    $("guides").innerHTML = html
-  } else $("guides").innerHTML = html
+    $("#guides").innerHTML = html
+  } else $("#guides").innerHTML = html
 };
 
-$all(".modal-trigger").forEach(trigger => {
-  trigger.addEventListener('click', e => {
+$all("#alt-modal-login, #alt-modal-register").forEach(trigger => {
+  const toggleId = (trigger.id.includes("login") && "login" || "register");
+
+  trigger.addEventListener("click", e => {
     e.preventDefault();
-    $all(".modal").toggle("hidden")
+    console.log(toggleId);
+    $(`#${toggleId} > .nav-link`).classList.replace("text-gray-500", "text-blue-500");
+    $all(`.modal-trigger:not(#${toggleId}) > .nav-link`).forEach(item => {
+      item.classList.replace("text-blue-500", "text-gray-500")
+    });
+    $all("#modal-login, #modal-register").toggle("hidden");
+
+  })
+})
+/*
+*/
+
+$all(".modal-trigger").forEach(trigger => {
+  trigger.addEventListener("click", e => {
+    e.preventDefault();
+
+    $(`#${trigger.id} > .nav-link`).classList.replace("text-gray-500", "text-blue-500");
+    $all(`.modal-trigger:not(#${trigger.id}) > .nav-link`).forEach(item => {
+      item.classList.replace("text-blue-500", "text-gray-500")
+    });
+
+    $all(".modal").forEach(modal => {
+      (modal.id === `modal-${trigger.id}`)
+        ? modal.classList.remove("hidden")
+        : modal.classList.add("hidden")
+    })
   })
 });

@@ -14,23 +14,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      user.geIdTokenResult().then(idTokenResult => {
+      user.getIdTokenResult().then(idTokenResult => {
         user.admin = idTokenResult.claims.admin;
-        console.log(idTokenResult.claims); //true
-        setupUI(user)
-      })
+      });
       db.collection("guides").onSnapshot(snapshot => {
         setupGuides(snapshot.docs);
       }, error => console.log(error))
+      setupUI(user);
     } else { setupGuides([]); setupUI(false) }
-  })
+  });
 
-  $("create-form").addEventListener("submit", e => {
+  $("#create-form").addEventListener("submit", e => {
     e.preventDefault();
 
     db.collection("guides").add({
-        title: $("create-form")["create-title"].value,
-        content: $("create-form")["create-content"].value })
+        title: $("#create-form")["create-title"].value,
+        content: $("#create-form")["create-content"].value })
       .catch(error => console.log(showErrorMessage(error.code)))
       .then(() => hideElem("create"))
   });
@@ -46,49 +45,51 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   */
 
-  $("register-form").addEventListener("submit", e => {
+  $("#register-form").addEventListener("submit", e => {
     e.preventDefault();
-    const firstName = $("register-form")["register-fname"].value;
-    const lastName = $("register-form")["register-lname"].value;
 
-    auth.createUserWithEmailAndPassword(email("register"), password("register"))
+    auth.createUserWithEmailAndPassword(email=getIdValue("register", "email"), getIdValue("register", "password"))
       .then(cred => {
         return db.collection("users").doc(cred.user.uid).set({
-          firstName: firstName,
-          lastName: lastName,
-          email: email("register") });
+          firstName: getIdValue("register", "fname"),
+          lastName: getIdValue("register", "lname"),
+          email: email
+        });
         return cred.user.updateProfile({displayName: `${firstName} ${lastName}`});
       })
       .then(() => {
         hideElem("register");
-        $all("#register-form > .error").textContent = ""
+        $("#register-form > .error").textContent = ""
       })
-      .catch(error => $all("#register-form > .error").textContent = error.message)
+      .catch(error => $("#register-form > .error").textContent = error.message)
     //console.log(auth.currentUser);
     //auth.currentUser.updateProfile({displayName: `${firstName} ${lastName}`, photoURL: "#"});
     //console.log(auth.updateCurrentUser({displayName: `${firstName} ${lastName}`, photoURL: "#"}));
   });
 
-  $("login-form").addEventListener("submit", e => {
+  $("#login-form").addEventListener("submit", e => {
     e.preventDefault();
-    auth.signInWithEmailAndPassword(email("login"),password("login"))
+    auth.signInWithEmailAndPassword(getIdValue("login", "email"),getIdValue("login", "password"))
       .catch(error => console.log(showErrorMessage(error.code)))
       .then(() => hideElem("login"))
   });
 
-  $("logout").addEventListener("click", e => {
+  $("#logout").addEventListener("click", e => {
     e.preventDefault();
-    auth.signOut().then(() => console.log("logged out"))
+    auth.signOut().then(() => {
+      $all(".modal-trigger > .nav-link").forEach(item => item.classList.remove("text-gray-500"))
+      $all(".modal-trigger > .nav-link").forEach(item => item.classList.add("text-blue-500"))
+    })
   });
 
-  $("admin-form").addEventListener("submit", e => {
+  $("#admin-form").addEventListener("submit", e => {
     e.preventDefault();
 
     // let mult = a => b => a * b
     // let currying = mult(2)
     // currying(4) returns 8
     // or mult(2)(4) returns 8
-    functions.httpsCallable("addAdminRole", { email: $("admin-email").value; })
+    functions.httpsCallable("addAdminRole", { email: $("#admin-email").value })
       .then(result => { console.log(result) })
   });
 
