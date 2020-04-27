@@ -16,11 +16,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if (user) {
       user.getIdTokenResult().then(idTokenResult => {
         user.admin = idTokenResult.claims.admin;
+        console.log(user.admin);
+        return setupUI(user);
       });
       db.collection("guides").onSnapshot(snapshot => {
         setupGuides(snapshot.docs);
       }, error => console.log(error))
-      setupUI(user);
+      console.log(user);
     } else { setupGuides([]); setupUI(false) }
   });
 
@@ -89,7 +91,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // let currying = mult(2)
     // currying(4) returns 8
     // or mult(2)(4) returns 8
-    functions.httpsCallable("addAdminRole", { email: $("#admin-email").value })
+    /*
+    functions.httpsCallable("addAdminRole")({email: $("#admin-email").value})
+      .then(result => { console.log(result) })
+    */
+    const addAdminRole = functions.httpsCallable("addAdminRole");
+    addAdminRole({ email: $("#admin-email").value })
       .then(result => { console.log(result) })
   });
 

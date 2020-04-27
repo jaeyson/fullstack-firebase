@@ -8,8 +8,8 @@ service cloud.firestore {
 
     match /guides/{guideId} {
       // allow read, write: if request.time < timestamp.date(2020, 4, 18);
-      allow read: if request.auth.uid != null;
-      allow write: if request.auth.token.admin == true;
+      allow write, read: if request.auth.uid != null;
+      //allow write: if request.auth.token.admin == true;
     }
   }
 }

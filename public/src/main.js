@@ -35,8 +35,8 @@ const accountDetails = (elem, user, html="") => {
       <p>${user.displayName || "someone"}</p>
       <p>Email: ${user.email}</p>
       <p class="font-bold text-white bg-purple-500 rounded">
-        ${user.admin ? "Admin" : ""}
-      <p>
+        ${user.admin && "Admin" || ""}
+      </p>
     </div>`; elem.innerHTML = html
   } else elem.innerHTML = html
 };
