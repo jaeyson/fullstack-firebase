@@ -16,13 +16,19 @@ document.addEventListener("DOMContentLoaded", function() {
     if (user) {
       user.getIdTokenResult().then(idTokenResult => {
         user.admin = idTokenResult.claims.admin;
-        console.log(user.admin);
         return setupUI(user);
       });
       db.collection("guides").onSnapshot(snapshot => {
         setupGuides(snapshot.docs);
-      }, error => console.log(error))
+      }, error => console.log(error));
       console.log(user);
+      if (user.displayName === null) {
+        return db.collection("users").doc(user.uid).onSnapshot(doc => {
+          return auth.currentUser.updateProfile({
+            displayName: `${doc.data().firstName} ${doc.data().lastName}`
+          })
+        })
+      }
     } else { setupGuides([]); setupUI(false) }
   });
 
@@ -57,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function() {
           lastName: getIdValue("register", "lname"),
           email: email
         });
-        return cred.user.updateProfile({displayName: `${firstName} ${lastName}`});
       })
       .then(() => {
         hideElem("register");

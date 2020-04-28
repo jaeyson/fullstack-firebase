@@ -14,7 +14,14 @@
   <script defer src="/__/firebase/init.js"></script>
 </head>
 
-<body class="container mx-auto">
+<body>
+  <div class="bg-purple-900 text-center py-2 lg:px-3">
+    <div class="p-1 bg-purple-800 items-center text-purple-100 leading-none rounded-full flex inline-flex" role="alert">
+      <span class="flex rounded-full bg-purple-500 uppercase px-2 py-1 text-xs font-bold mr-3">Status</span>
+      <span class="font-semibold mr-2 text-left flex-auto">This site is still under development</span>
+    </div>
+  </div>
+  <div class="container mx-auto"> <!-- start container -->
   <nav>
     <ul class="flex justify-end py-4">
       <!--
@@ -167,6 +174,8 @@
   <!-- guide list start -->
   <div id="guides" class="collapsible">
   </div>
+
+  </div> <!-- end container -->
   <!-- guide list end -->
   <script src="src/auth.js"></script>
   <script src="src/main.js"></script>
